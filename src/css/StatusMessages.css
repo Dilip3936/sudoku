@@ -32,3 +32,9 @@
   font-size: 1.2em;
   display: inline-block;
 }
+
+.sudoku-difficulty {
+  font-size: 1.2em;
+  color: #1976d2;
+  letter-spacing: 1px;
+}

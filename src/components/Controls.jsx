@@ -11,27 +11,33 @@ export default function Controls({
   onNewPuzzle,
   loading,
   hasWon,
+  onClearAll,
   locked,
   onToggleLockPuzzle
 }) {
   return (
     <div style={{ marginTop: '1em' }}>
-      <button onClick={onSolve} disabled={!locked} >Solve</button>
-      <button onClick={onReset} style={{ marginLeft: '1em' }}>Reset</button>
-      <button onClick={onNewPuzzle}  disabled={loading|| !locked} style={{ marginLeft: '1em' }}>
+      <button title="Solve the Sudoku!" onClick={onSolve} disabled={!locked || hasWon} >Solve</button>
+      <button title="Reset the Sudoku!" onClick={onReset} style={{ marginLeft: '1em' }}>Reset</button>
+      <button title="Get a new Sudoku!" onClick={onNewPuzzle}  disabled={loading} style={{ marginLeft: '1em' }}>
         {loading ? "Loading..." : "New Puzzle"}
       </button>
       <button
+      title="Lock or unlock the puzzle to prevent changes"
         onClick={onToggleLockPuzzle}
         style={{ marginLeft: '1em' }}
         disabled={false}
       >
         {locked ? 'Unlock Puzzle' : 'Lock Puzzle'}
       </button>
+      <button title="Clears all the contents" onClick={onClearAll} style={{ marginLeft: '1em' }} disabled={loading}>
+        Clear All
+      </button>
 
 
 
       <button
+      title="Animate the solving process"
         onClick={() => setAnimateSolve(a => !a)}
         disabled={!locked}
         style={{ marginLeft: '1em' }}

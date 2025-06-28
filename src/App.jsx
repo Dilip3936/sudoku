@@ -21,14 +21,19 @@ function createBoard(puzzle) {
 }
 
 export default function App() {
-  const [board, setBoard] = useState(createBoard(initialPuzzle));
+    const [initialPuzzle, setInitialPuzzle] = useState(
+        Array.from({ length: 9 }, () => Array(9).fill(0)) // Start with all zeros
+      );
+      const [board, setBoard] = useState(createBoard(initialPuzzle));
   const [invalidMove, setInvalidMove] = useState(false);
   const [solveError, setSolveError] = useState('');
   const [animateSolve, setAnimateSolve] = useState(false);
   const animationActiveRef = useRef(false);
   const [delay, setDelay] = useState(50); // Default to 50ms per step
   const [loading, setLoading] = useState(false);
-  const [locked, setLocked] = useState(true);
+  const [locked, setLocked] = useState(false);
+  const [difficulty, setDifficulty] = useState('');
+
 
 
 
@@ -49,16 +54,31 @@ export default function App() {
     animationActiveRef.current = false;
     setInvalidMove(false);
     setSolveError('');
+    setLocked(true);
     setLoading(true);
+  
     try {
-      const { puzzle } = await fetchSudokuPuzzle();
+      const { puzzle, difficulty } = await fetchSudokuPuzzle();
+      setInitialPuzzle(puzzle);
       setBoard(createBoard(puzzle));
+      setDifficulty(difficulty); // <-- Set the difficulty here
     } catch (error) {
       setSolveError(error.message);
+      setDifficulty(''); // Clear on error
     } finally {
       setLoading(false);
     }
   }
+  
+  
+  function handleClearAll() {
+    animationActiveRef.current = false; // Stop any animation
+    setBoard(createBoard(Array.from({ length: 9 }, () => Array(9).fill(0))));
+    setInvalidMove(false);
+    setSolveError('');
+    setLocked(false); // Optional: unlock the board for editing
+  }
+  
   
 
   function handleCellChange(rowIdx, colIdx, newValue) {
@@ -147,13 +167,13 @@ export default function App() {
     }
   }
   
-
   function handleReset() {
-    animationActiveRef.current = false; // Stop animation if running
-    setBoard(createBoard(initialPuzzle));
+    animationActiveRef.current = false;
+    setBoard(createBoard(initialPuzzle)); // <--- Use the last fetched puzzle
     setInvalidMove(false);
     setSolveError('');
   }
+  
   
   const hasWon = isBoardComplete(board);
 
@@ -172,6 +192,7 @@ export default function App() {
         locked={locked}
         hasWon={hasWon}
         onToggleLockPuzzle={handleToggleLockPuzzle}
+        onClearAll={handleClearAll}
         />
         
 
@@ -190,6 +211,12 @@ export default function App() {
           🎉 Congratulations! You solved the puzzle! 🎉
         </StatusMessage>
       )}
+      {difficulty && (
+  <div className="sudoku-difficulty" style={{ margin: '1em 0', fontWeight: 'bold' }}>
+    Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+  </div>
+)}
+
     </div>
   );
   

@@ -35,7 +35,6 @@ export function isBoardValid(board) {
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
       const cell = board[row][col];
-      console.log(`Checking cell at (${row}, ${col}): value=${cell.value}`);
       if (!isValidMove(board, row, col, cell.value)) return false;
     }
   }
