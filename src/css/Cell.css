@@ -1,0 +1,45 @@
+/* src/components/Cell.css */
+
+.cell {
+    width: 42px;
+    height: 42px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #bbb;
+    text-align: center;
+    font-size: 1.5rem;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    background: #fff;
+    transition: background 0.15s, border-color 0.15s;
+    outline: none;
+  }
+  
+  .cell:focus {
+    background: #e3f2fd;
+    border-color: #1976d2;
+    z-index: 1;
+    position: relative;
+  }
+  
+  .cell--readonly {
+    background: #f0f0f0;
+    color: #888;
+    font-weight: bold;
+    cursor: not-allowed;
+  }
+  
+  /* New class for incorrect cells */
+.cell--incorrect:focus {
+  background: #fff0f0;         /* Light red background */
+  border-color: #e53935;       /* Red border */
+  color: #b71c1c;              /* Dark red text */
+  animation: shake 0.2s 1;     /* Optional: shake animation for feedback */
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
