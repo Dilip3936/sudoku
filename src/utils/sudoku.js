@@ -68,11 +68,10 @@ export async function solveSudokuVisual(board, setBoard, delay, animationActiveR
         await new Promise(res => setTimeout(res, delay));
       }
     }
-    board[r][c].value = 0;
     return false;
   }
 
-  await solve(0, 0);
+  return await solve(0, 0);
 }
 
 

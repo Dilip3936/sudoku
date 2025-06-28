@@ -1,10 +1,12 @@
 // src/App.jsx
-import React, { useState ,useRef} from 'react';
+import React, { useState ,useRef,useEffect} from 'react';
 import Board from './components/Board';
 import Controls from './components/Controls';
 import './css/StatusMessages.css';
 import StatusMessage from './components/StatusMessage';
 import { fetchSudokuPuzzle } from './utils/fetchSudoku.js';
+import NumberPad from './components/NumberPad';
+import './css/NumberPad.css';
 import { isValidMove, isBoardComplete, solveSudokuVisual,solveSudoku } from './utils/sudoku';
 
 const initialPuzzle = Array.from({ length: 9 }, () => Array(9).fill(0));
@@ -29,15 +31,17 @@ export default function App() {
   const [solveError, setSolveError] = useState('');
   const [animateSolve, setAnimateSolve] = useState(false);
   const animationActiveRef = useRef(false);
-  const [delay, setDelay] = useState(50); // Default to 50ms per step
+  const [delay, setDelay] = useState(1); // Default to 1ms per step
   const [loading, setLoading] = useState(false);
   const [locked, setLocked] = useState(false);
   const [difficulty, setDifficulty] = useState('');
+  const [focusedCell, setFocusedCell] = useState({ row: 0, col: 0 });
 
 
 
 
-  function onCellFocus(rowIdx, colIdx) {
+
+  function handleCellFocus(rowIdx, colIdx) {
     setInvalidMove(false);
     setBoard(prevBoard =>
       prevBoard.map((row, r) =>
@@ -48,6 +52,7 @@ export default function App() {
         )
       )
     );
+    setFocusedCell({ row:rowIdx, col:colIdx });
   }
 
   async function handleNewPuzzle() {
@@ -74,6 +79,7 @@ export default function App() {
   function handleClearAll() {
     animationActiveRef.current = false; // Stop any animation
     setBoard(createBoard(Array.from({ length: 9 }, () => Array(9).fill(0))));
+    setInitialPuzzle(Array.from({ length: 9 }, () => Array(9).fill(0)));
     setInvalidMove(false);
     setSolveError('');
     setLocked(false); // Optional: unlock the board for editing
@@ -91,7 +97,7 @@ export default function App() {
           return prevBoard.map((row, r) =>
             row.map((cell, c) =>
               r === rowIdx && c === colIdx
-                ? { ...cell, value: newValue,incorrect: false} // valid move, not incorrect
+                ? { ...cell, value: newValue,incorrect: false} 
                 : { ...cell} // clear incorrect on all other cells
             )
           );
@@ -101,7 +107,7 @@ export default function App() {
             row.map((cell, c) =>
               r === rowIdx && c === colIdx
                 ? { ...cell, value: newValue,incorrect: true} // mark as incorrect
-                : { ...cell} // clear incorrect on all other cells
+                : { ...cell}
             )
           );
         }
@@ -147,6 +153,33 @@ export default function App() {
   }
   
   
+  function handleNumberPadInput(num) {
+    const { row, col } = focusedCell;
+    setBoard(prevBoard =>
+      prevBoard.map((r, ri) =>
+        r.map((cell, ci) =>
+          ri === row && ci === col && !cell.readOnly
+            ? { ...cell, value: num, incorrect: false }
+            : cell
+        )
+      )
+    );
+    setInvalidMove(false);
+  }
+
+  function handleNumberPadClear() {
+    const { row, col } = focusedCell;
+    setBoard(prevBoard =>
+      prevBoard.map((r, ri) =>
+        r.map((cell, ci) =>
+          ri === row && ci === col && !cell.readOnly
+            ? { ...cell, value: 0, incorrect: false }
+            : cell
+        )
+      )
+    );
+    setInvalidMove(false);
+  }
   
   
   async function handleSolve() {
@@ -179,7 +212,16 @@ export default function App() {
 
   return (
     <div>
-      <Board board={board} onCellChange={handleCellChange} onCellFocus={onCellFocus} />
+        <Board
+          board={board}
+          onCellChange={handleCellChange}
+          onCellFocus={(row, col) => handleCellFocus(row, col)}
+          focusedCell={focusedCell}
+        />
+        <NumberPad
+          onNumberClick={handleNumberPadInput}
+          onClear={handleNumberPadClear}
+        />
         <Controls
         onSolve={handleSolve}
         onReset={handleReset}
