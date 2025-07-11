@@ -36,24 +36,76 @@ export default function App() {
   const [locked, setLocked] = useState(false);
   const [difficulty, setDifficulty] = useState('');
   const [focusedCell, setFocusedCell] = useState({ row: 0, col: 0 });
+  const [feedbackEnabled, setFeedbackEnabled] = useState(true);
 
 
 
 
+  function handleFeedback(rowIdx, colIdx, value = null) {
+    if (!feedbackEnabled) {
+      // Clear feedback if disabled
+      setInvalidMove(false);
+      setSolveError('');
+      setBoard(prevBoard =>
+        prevBoard.map(row =>
+          row.map(cell => ({ ...cell, incorrect: false }))
+        )
+      );
+      return;
+    }
+    setBoard(prevBoard => {
+      // Determine value to check (if not provided, use current cell value)
+      const cellValue = value !== null ? value : prevBoard[rowIdx][colIdx].value;
+      const isValid = cellValue === 0 || isValidMove(prevBoard, rowIdx, colIdx, cellValue);
+  
+      if (isValid) {
+        setInvalidMove(false);
+        setSolveError('');
+        return prevBoard.map((row, r) =>
+          row.map((cell, c) =>
+            r === rowIdx && c === colIdx
+              ? { ...cell, incorrect: false }
+              : cell
+          )
+        );
+      } else {
+        setInvalidMove(true);
+        setSolveError('');
+        return prevBoard.map((row, r) =>
+          row.map((cell, c) =>
+            r === rowIdx && c === colIdx
+              ? { ...cell, incorrect: true }
+              : cell
+          )
+        );
+      }
+    });
+  }
+  
 
   function handleCellFocus(rowIdx, colIdx) {
-    setInvalidMove(false);
-    setBoard(prevBoard =>
-      prevBoard.map((row, r) =>
-        row.map((cell, c) =>
-          r === rowIdx && c === colIdx
-            ? { ...cell, incorrect: !isValidMove(prevBoard, rowIdx, colIdx, cell.value) }
-            : cell
-        )
-      )
-    );
     setFocusedCell({ row:rowIdx, col:colIdx });
+    handleFeedback(rowIdx, colIdx);
   }
+
+  function toggleFeedback() {
+    setFeedbackEnabled(prev => !prev);
+    if (feedbackEnabled) {
+      // If turning off, clear all feedback
+      setInvalidMove(false);
+      setSolveError('');
+      setBoard(prevBoard =>
+        prevBoard.map(row =>
+          row.map(cell => ({ ...cell, incorrect: false }))
+        )
+      );
+    } else {
+      // Optionally, re-run feedback for the currently focused cell
+      const { row, col } = focusedCell;
+      handleFeedback(row, col);
+    }
+  }
+  
 
   async function handleNewPuzzle() {
     animationActiveRef.current = false;
@@ -89,30 +141,17 @@ export default function App() {
 
   function handleCellChange(rowIdx, colIdx, newValue) {
     setBoard(prevBoard => {
-        const isValid = newValue === 0 || isValidMove(prevBoard, rowIdx, colIdx, newValue);
-      
-        if (isValid) {
           setInvalidMove(false);
           setSolveError('');
           return prevBoard.map((row, r) =>
             row.map((cell, c) =>
               r === rowIdx && c === colIdx
-                ? { ...cell, value: newValue,incorrect: false} 
-                : { ...cell} // clear incorrect on all other cells
-            )
-          );
-        } else {
-          setInvalidMove(true);
-          return prevBoard.map((row, r) =>
-            row.map((cell, c) =>
-              r === rowIdx && c === colIdx
-                ? { ...cell, value: newValue,incorrect: true} // mark as incorrect
+                ? { ...cell, value: newValue} 
                 : { ...cell}
             )
           );
-        }
       });
-      
+      handleFeedback(rowIdx, colIdx, newValue);      
   }
 
   function handleToggleLockPuzzle() {
@@ -159,13 +198,14 @@ export default function App() {
       prevBoard.map((r, ri) =>
         r.map((cell, ci) =>
           ri === row && ci === col && !cell.readOnly
-            ? { ...cell, value: num, incorrect: false }
+            ? { ...cell, value: num}
             : cell
         )
       )
     );
-    setInvalidMove(false);
+    handleFeedback(row, col, num);
   }
+  
 
   function handleNumberPadClear() {
     const { row, col } = focusedCell;
@@ -173,12 +213,12 @@ export default function App() {
       prevBoard.map((r, ri) =>
         r.map((cell, ci) =>
           ri === row && ci === col && !cell.readOnly
-            ? { ...cell, value: 0, incorrect: false }
+            ? { ...cell, value: 0}
             : cell
         )
       )
     );
-    setInvalidMove(false);
+    handleFeedback(row, col, 0);
   }
   
   
@@ -235,6 +275,8 @@ export default function App() {
         hasWon={hasWon}
         onToggleLockPuzzle={handleToggleLockPuzzle}
         onClearAll={handleClearAll}
+        feedbackEnabled={feedbackEnabled}      
+        onToggleFeedback={toggleFeedback}
         />
         
 
