@@ -8,9 +8,7 @@ import { fetchSudokuPuzzle } from './utils/fetchSudoku.js';
 import NumberPad from './components/NumberPad';
 import './css/NumberPad.css';
 import { isValidMove, isBoardComplete, solveSudokuVisual,solveSudoku } from './utils/sudoku';
-
-const initialPuzzle = Array.from({ length: 9 }, () => Array(9).fill(0));
-
+import OcrUploader from './components/ocrupload.jsx';
   
 function createBoard(puzzle) {
   return puzzle.map(row =>
@@ -23,22 +21,19 @@ function createBoard(puzzle) {
 }
 
 export default function App() {
-    const [initialPuzzle, setInitialPuzzle] = useState(
-        Array.from({ length: 9 }, () => Array(9).fill(0)) // Start with all zeros
-      );
-      const [board, setBoard] = useState(createBoard(initialPuzzle));
+  
+  const [initialPuzzle, setInitialPuzzle] = useState(Array.from({ length: 9 }, () => Array(9).fill(0)));
+  const [board, setBoard] = useState(createBoard(initialPuzzle));
   const [invalidMove, setInvalidMove] = useState(false);
   const [solveError, setSolveError] = useState('');
   const [animateSolve, setAnimateSolve] = useState(false);
   const animationActiveRef = useRef(false);
-  const [delay, setDelay] = useState(1); // Default to 1ms per step
+  const [delay, setDelay] = useState(0); // Default to 1ms per step
   const [loading, setLoading] = useState(false);
   const [locked, setLocked] = useState(false);
   const [difficulty, setDifficulty] = useState('');
   const [focusedCell, setFocusedCell] = useState({ row: 0, col: 0 });
   const [feedbackEnabled, setFeedbackEnabled] = useState(true);
-
-
 
 
   function handleFeedback(rowIdx, colIdx, value = null) {
@@ -53,7 +48,12 @@ export default function App() {
       );
       return;
     }
+
     setBoard(prevBoard => {
+      if (prevBoard[rowIdx][colIdx].readOnly) {
+        setInvalidMove(false);
+        return prevBoard;
+      }
       // Determine value to check (if not provided, use current cell value)
       const cellValue = value !== null ? value : prevBoard[rowIdx][colIdx].value;
       const isValid = cellValue === 0 || isValidMove(prevBoard, rowIdx, colIdx, cellValue);
@@ -79,7 +79,8 @@ export default function App() {
           )
         );
       }
-    });
+    }
+  ); 
   }
   
 
@@ -136,8 +137,6 @@ export default function App() {
     setSolveError('');
     setLocked(false); // Optional: unlock the board for editing
   }
-  
-  
 
   function handleCellChange(rowIdx, colIdx, newValue) {
     setBoard(prevBoard => {
@@ -191,7 +190,6 @@ export default function App() {
     }
   }
   
-  
   function handleNumberPadInput(num) {
     const { row, col } = focusedCell;
     setBoard(prevBoard =>
@@ -206,7 +204,6 @@ export default function App() {
     handleFeedback(row, col, num);
   }
   
-
   function handleNumberPadClear() {
     const { row, col } = focusedCell;
     setBoard(prevBoard =>
@@ -247,7 +244,6 @@ export default function App() {
     setSolveError('');
   }
   
-  
   const hasWon = isBoardComplete(board);
 
   return (
@@ -279,6 +275,8 @@ export default function App() {
         onToggleFeedback={toggleFeedback}
         />
         
+        <h1>OCR Demo</h1>
+        <OcrUploader />
 
       {invalidMove && (
         <StatusMessage type="error">
