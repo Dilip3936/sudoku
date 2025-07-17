@@ -8,8 +8,8 @@ import { fetchSudokuPuzzle } from './utils/fetchSudoku.js';
 import NumberPad from './components/NumberPad';
 import './css/NumberPad.css';
 import { isValidMove, isBoardComplete, solveSudokuVisual,solveSudoku } from './utils/sudoku';
-import OcrUploader from './components/ocr.jsx';
 import { OpenCvProvider } from 'opencv-react';
+import SudokuOcrUploader from './components/ocr';
 
 function createBoard(puzzle) {
   return puzzle.map(row =>
@@ -29,13 +29,22 @@ export default function App() {
   const [solveError, setSolveError] = useState('');
   const [animateSolve, setAnimateSolve] = useState(false);
   const animationActiveRef = useRef(false);
-  const [delay, setDelay] = useState(0); // Default to 1ms per step
+  const [delay, setDelay] = useState(0); // Default to 0ms per step
   const [loading, setLoading] = useState(false);
+  const [solving, setSolving] = useState(false);
   const [locked, setLocked] = useState(false);
   const [difficulty, setDifficulty] = useState('');
   const [focusedCell, setFocusedCell] = useState({ row: 0, col: 0 });
   const [feedbackEnabled, setFeedbackEnabled] = useState(true);
 
+  const handleSudokuExtracted = (grid) => {
+    animationActiveRef.current = false;
+    setInvalidMove(false);
+    setSolveError('');
+    setLocked(true);
+    setInitialPuzzle(grid);
+    setBoard(createBoard(grid));
+  };
 
   function handleFeedback(rowIdx, colIdx, value = null) {
     if (!feedbackEnabled) {
@@ -223,6 +232,7 @@ export default function App() {
   async function handleSolve() {
     setInvalidMove(false);
     setSolveError('');
+    setSolving(true);
     const workingBoard = board.map(row => row.map(cell => ({ ...cell })));
   
     if (animateSolve) {
@@ -236,6 +246,7 @@ export default function App() {
       if (solution) setBoard(solution);
       else setSolveError('No solution found for the current board!');
     }
+    setSolving(false);
   }
   
   function handleReset() {
@@ -268,6 +279,7 @@ export default function App() {
         delay={delay}
         setDelay={setDelay}
         loading={loading}
+        solving={solving}
         locked={locked}
         hasWon={hasWon}
         onToggleLockPuzzle={handleToggleLockPuzzle}
@@ -276,10 +288,10 @@ export default function App() {
         onToggleFeedback={toggleFeedback}
         />
         
-        <h1>OCR Demo</h1>
+        <h1>OCR</h1>
         <OpenCvProvider openCvPath="opencv.js">
-      <OcrUploader />
-    </OpenCvProvider>
+        <SudokuOcrUploader onSudokuExtracted={handleSudokuExtracted} />
+        </OpenCvProvider>
 
       {invalidMove && (
         <StatusMessage type="error">

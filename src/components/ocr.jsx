@@ -1,8 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { useOpenCv } from 'opencv-react';
 import { locatePuzzle, splitIntoCells, processCells,predictDigitsFromCells } from '../utils/processing';
+import '../css/Ocr.css'
 
-function SudokuOcrUploader() {
+/**
+ * @param {object} props
+ * @param {(grid: number[][]) => void} props.onSudokuExtracted - Callback function to pass the extracted grid to the parent.
+ */
+
+function SudokuOcrUploader({ onSudokuExtracted }) {
   const { loaded, cv } = useOpenCv();
   const [result, setResult] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -41,7 +47,9 @@ function SudokuOcrUploader() {
       const processedCells = processCells(cells, cv);
       processedCells.forEach(mat => mats.push(mat));
       const grid = await predictDigitsFromCells(processedCells, cv);
-      setResult(grid.map(r => r.join(' ')).join('\n'));
+      if (onSudokuExtracted) {
+        onSudokuExtracted(grid);
+      }
       
     } catch (err) {
       setResult('Failed: ' + err.message);
@@ -54,6 +62,7 @@ function SudokuOcrUploader() {
   return (
     <div>
       <input
+        title="Upload an image of a Sudoku puzzle to solve"
         type="file"
         accept="image/*"
         disabled={!loaded || processing}
@@ -66,8 +75,8 @@ function SudokuOcrUploader() {
         {loaded ? (processing ? 'Processing...' : 'Extract Sudoku Grid') : 'Loading OpenCV...'}
       </button>
       <pre style={{ whiteSpace: 'pre-wrap' }}>{result}</pre>
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-    </div>
+      <canvas ref={canvasRef} style={{ width: '400px', height: '400px' }} />
+          </div>
   );
 }
 

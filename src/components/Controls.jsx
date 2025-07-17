@@ -13,13 +13,15 @@ export default function Controls({
   hasWon,
   onClearAll,
   locked,
+  solving,
   onToggleLockPuzzle,
   onToggleFeedback,
   feedbackEnabled
 }) {
   return (
     <div style={{ marginTop: '1em' }}>
-      <button title="Solve the Sudoku!" onClick={onSolve} disabled={!locked || hasWon || loading} >Solve</button>
+      <button title="Solve the Sudoku!" onClick={onSolve} disabled={!locked || hasWon || solving} >
+        {solving? "Solving..." : "solve" }</button>
       <button title="Reset the Sudoku!" onClick={onReset} style={{ marginLeft: '1em' }}>Reset</button>
       <button title="Get a new Sudoku!" onClick={onNewPuzzle}  disabled={loading} style={{ marginLeft: '1em' }}>
         {loading ? "Loading..." : "New Puzzle"}
