@@ -8,8 +8,9 @@ import { fetchSudokuPuzzle } from './utils/fetchSudoku.js';
 import NumberPad from './components/NumberPad';
 import './css/NumberPad.css';
 import { isValidMove, isBoardComplete, solveSudokuVisual,solveSudoku } from './utils/sudoku';
-import OcrUploader from './components/ocrupload.jsx';
-  
+import OcrUploader from './components/ocr.jsx';
+import { OpenCvProvider } from 'opencv-react';
+
 function createBoard(puzzle) {
   return puzzle.map(row =>
     row.map(cell => ({
@@ -276,7 +277,9 @@ export default function App() {
         />
         
         <h1>OCR Demo</h1>
-        <OcrUploader />
+        <OpenCvProvider openCvPath="opencv.js">
+      <OcrUploader />
+    </OpenCvProvider>
 
       {invalidMove && (
         <StatusMessage type="error">
