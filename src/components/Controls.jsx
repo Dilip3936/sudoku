@@ -16,57 +16,70 @@ export default function Controls({
   solving,
   onToggleLockPuzzle,
   onToggleFeedback,
-  feedbackEnabled
+  feedbackEnabled,
+  selectedDifficulty,
+  setSelectedDifficulty
 }) {
   return (
-    <div style={{ marginTop: '1em' }}>
-      <button title="Solve the Sudoku!" onClick={onSolve} disabled={!locked || hasWon || solving} >
-        {solving? "Solving..." : "solve" }</button>
-      <button title="Reset the Sudoku!" onClick={onReset} style={{ marginLeft: '1em' }}>Reset</button>
-      <button title="Get a new Sudoku!" onClick={onNewPuzzle}  disabled={loading} style={{ marginLeft: '1em' }}>
-        {loading ? "Loading..." : "New Puzzle"}
-      </button>
-      <button
-      title="Lock or unlock the puzzle to prevent changes"
-        onClick={onToggleLockPuzzle}
-        style={{ marginLeft: '1em' }}
-        disabled={false}
-      >
-        {locked ? 'Unlock Puzzle' : 'Lock Puzzle'}
-      </button>
-      <button title="Clears all the contents" onClick={onClearAll} style={{ marginLeft: '1em' }} disabled={loading}>
-        Clear All
-      </button>
-      <button onClick={onToggleFeedback} style={{ marginLeft: '1em' }}>
-      {feedbackEnabled ? 'Disable Feedback' : 'Enable Feedback'}
-      </button>
+    <>
+      {/* Row 1: Solve · Reset · New Puzzle · Lock · Clear All */}
+      <div className="controls-row">
+        <button title="Solve the Sudoku!" onClick={onSolve} disabled={!locked || hasWon || solving}>
+          {solving ? 'Solving…' : 'Solve'}
+        </button>
+        <button title="Reset the Sudoku!" onClick={onReset}>Reset</button>
 
+        <div className="new-puzzle-group">
+          <select
+            value={selectedDifficulty}
+            onChange={(e) => setSelectedDifficulty(e.target.value)}
+            className="difficulty-select"
+            title="Select Puzzle Difficulty"
+          >
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+            <option value="random">Random</option>
+          </select>
+          <button title="Get a new Sudoku!" onClick={onNewPuzzle} disabled={loading} className="new-puzzle-btn">
+            {loading ? 'Loading…' : 'New Puzzle'}
+          </button>
+        </div>
 
+        <button title="Lock or unlock the puzzle to prevent changes" onClick={onToggleLockPuzzle}>
+          {locked ? 'Unlock' : 'Lock'}
+        </button>
+        <button title="Clears all the contents" onClick={onClearAll} disabled={loading}>
+          Clear All
+        </button>
+      </div>
 
-      <button
-      title="Animate the solving process"
-        onClick={() => setAnimateSolve(a => !a)}
-        disabled={!locked}
-        style={{ marginLeft: '1em' }}
-      >
-        Animation: {animateSolve ? 'ON' : 'OFF'}
-      </button>
-      <label style={{ marginLeft: '1em', verticalAlign: 'middle' }}>
-        Speed:
-        <input
-          type="range"
-          min="0"
-          max="500"
-          step="1"
-          value={delay}
-          onChange={e => setDelay(Number(e.target.value))}
-          style={{ marginLeft: '0.5em', verticalAlign: 'middle' }}
-          disabled={!animateSolve}
-        />
-        <span style={{ marginLeft: '0.5em', fontSize: '0.9em' }}>
-          {delay} ms
-        </span>
-      </label>
-    </div>
+      {/* Row 2: Feedback · Animation · Speed slider */}
+      <div className="controls-row">
+        <button onClick={onToggleFeedback}>
+          {feedbackEnabled ? 'Feedback: ON' : 'Feedback: OFF'}
+        </button>
+        <button
+          title="Animate the solving process"
+          onClick={() => setAnimateSolve(a => !a)}
+          disabled={!locked}
+        >
+          Animation: {animateSolve ? 'ON' : 'OFF'}
+        </button>
+        <label className="speed-label">
+          Speed
+          <input
+            type="range"
+            min="0"
+            max="500"
+            step="1"
+            value={delay}
+            onChange={e => setDelay(Number(e.target.value))}
+            disabled={!animateSolve}
+          />
+          <span>{delay}ms</span>
+        </label>
+      </div>
+    </>
   );
 }

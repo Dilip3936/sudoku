@@ -1,0 +1,41 @@
+/* src/css/App.css */
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.board-and-ocr-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  width: 100%;
+}
+
+/* board-column keeps board, numberpad, and controls stacked together
+   so the OCR debug panel expanding never displaces the controls */
+.board-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: -1.5rem;
+}
+
+/* On larger screens, put the Board and OCR side by side */
+@media (min-width: 900px) {
+  .board-and-ocr-wrapper {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 4rem;
+  }
+
+  .ocr-container {
+    margin-top: 1rem;
+    /* Aligns visually better with the top of the board */
+    flex: 0 1 400px;
+  }
+}

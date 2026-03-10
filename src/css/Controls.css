@@ -1,0 +1,116 @@
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--board-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--glass-shadow);
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.controls-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.controls-row>button {
+  flex: 1;
+  padding: 0.9rem 1.25rem;
+  font-size: 1rem;
+}
+
+.controls-container>* {
+  margin: 0 !important;
+}
+
+.controls-container label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.speed-label {
+  flex: 2 !important;
+  white-space: nowrap;
+}
+
+.speed-label input[type="range"] {
+  flex: 1;
+  min-width: 60px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.controls-container input[type="range"] {
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+
+.new-puzzle-group {
+  display: flex;
+  align-items: stretch;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.new-puzzle-group .difficulty-select {
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: none;
+  border-right: 1px solid var(--glass-border);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.new-puzzle-group .new-puzzle-btn {
+  margin: 0 !important;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--bg-secondary);
+}
+
+.new-puzzle-group .new-puzzle-btn:hover:not(:disabled) {
+  background: var(--accent-color);
+}
+
+/* Primary actions */
+button[title="Solve the Sudoku!"] {
+  background: var(--success-color);
+  color: #fff;
+  border-color: var(--success-color);
+}
+
+button[title="Solve the Sudoku!"]:hover:not(:disabled) {
+  background: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+button[title="Clears all the contents"] {
+  background: var(--danger-color);
+  color: #fff;
+  border-color: var(--danger-color);
+}
+
+button[title="Clears all the contents"]:hover:not(:disabled) {
+  background: var(--danger-hover);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}

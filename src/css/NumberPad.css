@@ -1,49 +1,66 @@
 .numpad {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5em;
-    background: #f8f9fa;
-    border-radius: 16px;
-    padding: 0.75em 1.5em;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    margin: 1em 0;
-  }
-  
-  .numpad-number,
-  .numpad-clear {
-    border: none;
-    outline: none;
-    background: #fff;
-    color: #222;
-    font-size: 1.2em;
-    font-weight: 500;
-    border-radius: 8px;
-    padding: 0.5em 1.2em;
-    margin: 0;
-    cursor: pointer;
-    transition: background 0.15s, box-shadow 0.15s, color 0.15s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
-  
-  .numpad-number:hover,
-  .numpad-clear:hover {
-    background: #1976d2;
-    color: #fff;
-  }
-  
-  .numpad-clear {
-    background: #f44336;
-    color: #fff;
-    font-weight: 600;
-    padding: 0.5em 1.5em;
-    margin-left: 1em;
-    transition: background 0.15s, color 0.15s;
-  }
-  
-  .numpad-clear:hover {
-    background: #b71c1c;
-    color: #fff;
-  }
-  
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: auto auto;
+  gap: 0.4rem;
+  background: var(--board-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--glass-shadow);
+  margin: 1rem 0 2rem 0;
+  width: 100%;
+  max-width: 680px;
+}
+
+.numpad-number {
+  border: 1px solid var(--cell-border);
+  outline: none;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.numpad-number:hover {
+  background: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.numpad-number:active {
+  transform: translateY(0);
+}
+
+.numpad-clear {
+  grid-column: 1 / -1;
+  background: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.numpad-clear:hover {
+  background: var(--danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.numpad-clear:active {
+  transform: translateY(0);
+}
